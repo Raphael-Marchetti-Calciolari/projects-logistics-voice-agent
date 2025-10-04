@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 import os
 from database import supabase
+from routers import configurations
 
 # Load environment variables
 load_dotenv()
@@ -19,6 +20,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Include routers
+app.include_router(configurations.router)
+
 @app.get("/")
 def read_root():
     return {"message": "Logistics Voice Agent API is running"}
@@ -31,7 +35,6 @@ def health_check():
 def test_database():
     """Test database connection"""
     try:
-        # Try to query the agent_configurations table
         result = supabase.table("agent_configurations").select("*").execute()
         return {
             "status": "success",
