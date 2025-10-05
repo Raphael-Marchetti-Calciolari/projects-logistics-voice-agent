@@ -1,17 +1,13 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
-import os
 from database import supabase
-from routers import configurations
+from routers import configurations, webhooks, calls
 
-# Load environment variables
 load_dotenv()
 
-# Initialize FastAPI app
 app = FastAPI(title="Logistics Voice Agent API")
 
-# Configure CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173"],
@@ -20,8 +16,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Include routers
+# Register routers
 app.include_router(configurations.router)
+app.include_router(webhooks.router)
+app.include_router(calls.router)
 
 @app.get("/")
 def read_root():
@@ -33,7 +31,6 @@ def health_check():
 
 @app.get("/test-db")
 def test_database():
-    """Test database connection"""
     try:
         result = supabase.table("agent_configurations").select("*").execute()
         return {
@@ -43,7 +40,4 @@ def test_database():
             "configurations_count": len(result.data)
         }
     except Exception as e:
-        return {
-            "status": "error",
-            "message": str(e)
-        }
+        return {"status": "error", "message": str(e)}

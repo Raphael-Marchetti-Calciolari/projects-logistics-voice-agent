@@ -25,3 +25,14 @@ class ConfigurationResponse(BaseModel):
     llm_id: Optional[str] = None
     agent_id: Optional[str] = None
     created_at: str
+
+class WebCallInitiateRequest(BaseModel):
+    driver_name: str = Field(..., min_length=1)
+    load_number: str = Field(..., min_length=1)
+    scenario_type: str = Field(..., pattern="^(checkin|emergency)$")
+
+class WebCallInitiateResponse(BaseModel):
+    call_id: str
+    retell_call_id: str
+    access_token: str
+    status: str
