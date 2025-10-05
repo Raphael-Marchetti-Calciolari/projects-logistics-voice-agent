@@ -131,7 +131,15 @@ pip install -r requirements.txt
 
 3. Configure `.env` file with your credentials
 
-4. Run server:
+4. Start ngrok to expose your local server (optional, for external access):
+
+```bash
+ngrok http 8000
+```
+
+This will provide a public URL forwarding to your local FastAPI server. That you should add to the `.env`
+
+5. Run server:
 ```bash
 uvicorn main:app --reload --port 8000
 ```
