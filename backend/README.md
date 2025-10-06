@@ -1,10 +1,24 @@
 # Logistics Voice Agent - Backend
 
-## Database Schema
+FastAPI backend for the Logistics Voice Agent system.
 
-### Creating database schema
+## Prerequisites
 
-Use the following SQL statement to create the database structure in supabase after creating a new project:
+- Python 3.11+
+- Supabase account
+- Retell AI account
+- OpenAI API account
+
+## Setup
+
+### 1. Create Supabase Project
+
+1. Go to [supabase.com](https://supabase.com) and create a new project
+2. Wait for the project to finish provisioning
+
+### 2. Create Database Tables
+
+Go to SQL Editor in Supabase and run:
 
 ```sql
 -- Create agent_configurations table
@@ -13,6 +27,8 @@ CREATE TABLE agent_configurations (
     scenario_type TEXT NOT NULL UNIQUE CHECK (scenario_type IN ('checkin', 'emergency')),
     system_prompt TEXT NOT NULL,
     retell_settings JSONB NOT NULL DEFAULT '{}'::jsonb,
+    llm_id TEXT,
+    agent_id TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
@@ -36,117 +52,83 @@ CREATE INDEX idx_call_logs_created_at ON call_logs(created_at DESC);
 CREATE INDEX idx_agent_configurations_scenario ON agent_configurations(scenario_type);
 ```
 
-### agent_configurations
-Stores AI agent prompts and voice settings for different call scenarios.
+### 3. Get API Credentials
 
-| Column | Type | Description |
-|--------|------|-------------|
-| id | UUID | Primary key |
-| scenario_type | TEXT | 'checkin' or 'emergency' |
-| system_prompt | TEXT | Instructions for the AI agent |
-| retell_settings | JSONB | Voice behavior configuration |
-| created_at | TIMESTAMP | Creation timestamp |
+**Supabase:**
+- Go to Project Settings → API
+- Copy `URL` and `anon/public` key
 
-**Constraints:**
-- `scenario_type` must be unique (one config per scenario)
-- `scenario_type` must be either 'checkin' or 'emergency'
+**Retell AI:**
+- Sign up at [retellai.com](https://www.retellai.com)
+- Get API key from dashboard
 
-**Example retell_settings:**
-```json
-{
-  "enable_backchannel": true,
-  "backchannel_frequency": 0.8,
-  "interruption_sensitivity": 0.7,
-  "ambient_sound_volume": 0.3,
-  "enable_filler_words": true,
-  "response_delay_ms": 200,
-  "voice_id": "string"
-}
-```
+**OpenAI:**
+- Get API key from [platform.openai.com](https://platform.openai.com)
 
----
+### 4. Configure Environment Variables
 
-### call_logs
-Stores information about each phone call made to drivers.
-
-| Column | Type | Description |
-|--------|------|-------------|
-| id | UUID | Primary key |
-| retell_call_id | TEXT | Retell's unique call identifier |
-| driver_name | TEXT | Name of the driver called |
-| driver_phone | TEXT | Driver's phone number |
-| load_number | TEXT | Load/shipment identifier |
-| scenario_type | TEXT | 'checkin' or 'emergency' |
-| call_status | TEXT | Current status of the call |
-| raw_transcript | TEXT | Full conversation transcript |
-| structured_data | JSONB | Extracted key-value pairs |
-| created_at | TIMESTAMP | Call initiation timestamp |
-
-**Call Status Values:**
-- `initiated` - Call has been triggered
-- `in_progress` - Call is actively happening
-- `completed` - Call finished successfully
-- `failed` - Call failed to complete
-
-**Example structured_data (check-in scenario):**
-```json
-{
-  "call_outcome": "In-Transit Update",
-  "driver_status": "Driving",
-  "current_location": "I-10 near Indio, CA",
-  "eta": "Tomorrow, 8:00 AM",
-  "delay_reason": "None",
-  "unloading_status": "N/A",
-  "pod_reminder_acknowledged": true
-}
-```
-
-**Example structured_data (emergency scenario):**
-```json
-{
-  "call_outcome": "Emergency Escalation",
-  "emergency_type": "Breakdown",
-  "safety_status": "Driver confirmed everyone is safe",
-  "injury_status": "No injuries reported",
-  "emergency_location": "I-15 North, Mile Marker 123",
-  "load_secure": true,
-  "escalation_status": "Connected to Human Dispatcher"
-}
-```
-
----
-
-## Setup
-
-1. Create virtual environment:
 ```bash
-python -m venv venv
+# Copy example file
+cp .env.example .env
+```
+
+Edit `.env` with your credentials:
+
+```env
+# Supabase
+SUPABASE_URL=https://xxxxx.supabase.co
+SUPABASE_KEY=your-anon-key-here
+
+# Retell AI
+RETELL_API_KEY=key_xxxxx
+RETELL_WEBHOOK_SECRET=key_yyyyyy
+RETELL_FROM_NUMBER=+1234567890  # Optional: only needed for phone calls
+
+# OpenAI
+OPENAI_API_KEY=sk-xxxxx
+```
+
+### 5. Install Dependencies
+
+```bash
+# Create virtual environment
+python3 -m venv venv
+
+# Activate virtual environment
 source venv/bin/activate  # Mac/Linux
-```
+# OR
+venv\Scripts\activate  # Windows
 
-2. Install dependencies:
-```bash
+# Install dependencies
 pip install -r requirements.txt
 ```
 
-3. Configure `.env` file with your credentials
+### 6. Set Up Webhook Tunnel (ngrok)
 
-4. Start ngrok to expose your local server (optional, for external access):
+In a separate terminal:
 
 ```bash
 ngrok http 8000
 ```
 
-This will provide a public URL forwarding to your local FastAPI server. That you should add to the `.env`
+Copy the HTTPS URL (e.g., `https://abc123.ngrok.io`)
 
-5. Run server:
+### 7. Configure Retell Webhook
+
+1. Go to Retell dashboard → Settings → Webhooks
+2. Set webhook URL to: `https://YOUR-NGROK-URL.ngrok.io/api/webhooks/retell`
+3. Save
+4. Go to your `.env` and set the `WEBHOOK_BASE_URL` to the value you copied e.g., `https://abc123.ngrok.io`
+
+### 8. Run the Server
+
 ```bash
+# Make sure you're in the backend directory with venv activated
 uvicorn main:app --reload --port 8000
 ```
 
-Obs: verify if you're using the appropriate uvicorn of your venv, check with `which uvicorn`.
+Or if uvicorn is not in PATH:
 
-If not pointing to your venv, use the following command instead:
 ```bash
 venv/bin/uvicorn main:app --reload --port 8000
 ```

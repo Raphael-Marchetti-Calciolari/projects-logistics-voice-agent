@@ -1,26 +1,42 @@
 # Logistics Voice Agent - Frontend
 
-This project is a Vite + React frontend for the Logistics Voice Agent.
+React + Vite frontend for the Logistics Voice Agent system.
 
 ## Prerequisites
 
-- [Node.js](https://nodejs.org/) (v20 or higher recommended)
-- [npm](https://www.npmjs.com/) or [yarn](https://yarnpkg.com/)
+- Node.js 18+ (v20 recommended)
+- npm or yarn
+- Backend server running (see `backend/README.md`)
 
 ## Setup
 
-1. **Install dependencies:**
-    ```bash
-    npm install
-    ```
+### 1. Install Dependencies
 
-2. **Configure environment variables:**
-    - Copy `.env.example` to `.env` and update values as needed.
+```bash
+npm install
+```
 
-3. **Start the development server:**
-    ```bash
-    npm run dev
-    ```
+### 2. Configure Environment Variables
 
-4. **Open the app:**
-    - Visit [http://localhost:5173](http://localhost:5173) in your browser.
+```bash
+# Copy example file
+cp .env.example .env
+```
+
+Edit `.env`:
+
+```env
+VITE_API_BASE_URL=http://localhost:8000
+```
+
+**Note:** Make sure this matches the port your backend is running on (default: 8000)
+
+### 3. Start Development Server
+
+```bash
+npm run dev
+```
+
+### 4. Open Application
+
+Visit [http://localhost:5173](http://localhost:5173) in your browser.
