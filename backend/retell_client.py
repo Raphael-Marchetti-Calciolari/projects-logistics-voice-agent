@@ -1,6 +1,6 @@
 import os
 from retell import AsyncRetell
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, List
 
 class RetellClient:
     def __init__(self):
@@ -10,13 +10,41 @@ class RetellClient:
         
         self.client = AsyncRetell(api_key=self.api_key)
     
-    async def create_llm(self, general_prompt: str) -> str:
-        """Create LLM and return ID"""
-        llm = await self.client.llm.create(
-            general_prompt=general_prompt,
-            model="gpt-4o"
-        )
+    async def create_llm(
+        self, 
+        general_prompt: str,
+        general_tools: Optional[List[Dict[str, Any]]] = None
+    ) -> str:
+        """Create LLM with optional tools and return ID"""
+        llm_config = {
+            "general_prompt": general_prompt,
+            "model": "gpt-4o"
+        }
+        
+        # Add tools if provided
+        if general_tools:
+            llm_config["general_tools"] = general_tools
+        
+        llm = await self.client.llm.create(**llm_config)
         return llm.llm_id
+    
+    async def update_llm(
+        self,
+        llm_id: str,
+        general_prompt: Optional[str] = None,
+        general_tools: Optional[List[Dict[str, Any]]] = None
+    ) -> None:
+        """Update an existing LLM"""
+        update_data = {}
+        
+        if general_prompt is not None:
+            update_data["general_prompt"] = general_prompt
+        
+        if general_tools is not None:
+            update_data["general_tools"] = general_tools
+        
+        if update_data:
+            await self.client.llm.update(llm_id, **update_data)
     
     async def create_agent(self, agent_name: str, llm_id: str) -> Dict[str, Any]:
         """Create agent"""

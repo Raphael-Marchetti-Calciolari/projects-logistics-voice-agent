@@ -5,6 +5,13 @@ from retell_client import retell_client
 
 router = APIRouter(prefix="/api/configurations", tags=["configurations"])
 
+# Define the end_call tool
+END_CALL_TOOL = {
+    "type": "end_call",
+    "name": "end_call",
+    "description": "End the call when: 1) All required information has been collected and goodbye has been said, 2) After 3 attempts to get information from an uncooperative driver who only gives single-word responses, 3) Emergency information has been gathered and escalation statement has been made. Always say a brief farewell before ending."
+}
+
 async def sync_retell_agent(config_id: str, scenario_type: str, system_prompt: str):
     """Create or update Retell LLM and agent, store IDs in database"""
     
@@ -21,8 +28,11 @@ async def sync_retell_agent(config_id: str, scenario_type: str, system_prompt: s
         
         # Create LLM if it doesn't exist
         if not llm_id:
-            print(f"Creating new {scenario_type} LLM...")
-            llm_id = await retell_client.create_llm(system_prompt)
+            print(f"Creating new {scenario_type} LLM with end_call tool...")
+            llm_id = await retell_client.create_llm(
+                general_prompt=system_prompt,
+                general_tools=[END_CALL_TOOL]
+            )
             print(f"✅ Created {scenario_type} LLM: {llm_id}")
             
             # Store LLM ID in database
@@ -30,6 +40,15 @@ async def sync_retell_agent(config_id: str, scenario_type: str, system_prompt: s
                 .update({"llm_id": llm_id})\
                 .eq("id", config_id)\
                 .execute()
+        else:
+            # Update existing LLM with new prompt and ensure end_call tool is present
+            print(f"Updating existing {scenario_type} LLM with end_call tool...")
+            await retell_client.update_llm(
+                llm_id=llm_id,
+                general_prompt=system_prompt,
+                general_tools=[END_CALL_TOOL]
+            )
+            print(f"✅ Updated {scenario_type} LLM")
         
         # Create agent if it doesn't exist
         if not agent_id:

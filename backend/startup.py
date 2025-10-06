@@ -3,6 +3,13 @@ from database import supabase
 from retell_client import retell_client
 from default_prompts import CHECKIN_PROMPT, EMERGENCY_PROMPT, DEFAULT_RETELL_SETTINGS
 
+# Define the end_call tool
+END_CALL_TOOL = {
+    "type": "end_call",
+    "name": "end_call",
+    "description": "End the call when: 1) All required information has been collected and goodbye has been said, 2) After 3 attempts to get information from an uncooperative driver who only gives single-word responses, 3) Emergency information has been gathered and escalation statement has been made. Always say a brief farewell before ending."
+}
+
 async def ensure_agent_exists(scenario_type: str, system_prompt: str):
     """Check if agent exists, create if not"""
     
@@ -17,8 +24,17 @@ async def ensure_agent_exists(scenario_type: str, system_prompt: str):
             config = result.data[0]
             
             # Check if agent_id exists
-            if config.get("agent_id"):
+            if config.get("agent_id") and config.get("llm_id"):
                 print(f"✅ {scenario_type.title()} agent already exists: {config['agent_id']}")
+                
+                # Update the LLM to ensure it has the end_call tool
+                print(f"🔄 Ensuring {scenario_type} LLM has end_call tool...")
+                await retell_client.update_llm(
+                    llm_id=config["llm_id"],
+                    general_tools=[END_CALL_TOOL]
+                )
+                print(f"✅ Updated {scenario_type} LLM with end_call tool")
+                
                 return config["agent_id"]
             else:
                 print(f"⚠️  {scenario_type.title()} config exists but no agent_id, creating...")
@@ -37,9 +53,12 @@ async def ensure_agent_exists(scenario_type: str, system_prompt: str):
             config_id = insert_result.data[0]["id"]
             print(f"✅ Created {scenario_type} configuration")
         
-        # Create LLM
-        print(f"🤖 Creating {scenario_type} LLM...")
-        llm_id = await retell_client.create_llm(system_prompt)
+        # Create LLM with end_call tool
+        print(f"🤖 Creating {scenario_type} LLM with end_call tool...")
+        llm_id = await retell_client.create_llm(
+            general_prompt=system_prompt,
+            general_tools=[END_CALL_TOOL]
+        )
         print(f"✅ Created LLM: {llm_id}")
         
         # Update config with LLM ID
