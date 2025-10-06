@@ -20,7 +20,11 @@ export default function Configuration() {
   useEffect(() => {
     if (configuration) {
       setSystemPrompt(configuration.system_prompt || '');
-      setRetellSettings(configuration.retell_settings || DEFAULT_RETELL_SETTINGS);
+      // Merge loaded settings with defaults to ensure all properties exist
+      setRetellSettings({
+        ...DEFAULT_RETELL_SETTINGS,
+        ...(configuration.retell_settings || {})
+      });
     } else {
       setSystemPrompt('');
       setRetellSettings(DEFAULT_RETELL_SETTINGS);
@@ -133,7 +137,7 @@ export default function Configuration() {
                 <label className="flex items-start sm:items-center">
                   <input
                     type="checkbox"
-                    checked={retellSettings.enable_backchannel}
+                    checked={retellSettings.enable_backchannel ?? DEFAULT_RETELL_SETTINGS.enable_backchannel}
                     onChange={(e) => updateSetting('enable_backchannel', e.target.checked)}
                     className="mt-0.5 sm:mt-0 h-4 w-4 text-primary-600 focus:ring-primary-500 border-neutral-300 rounded cursor-pointer"
                   />
@@ -145,7 +149,7 @@ export default function Configuration() {
               {/* Backchannel Frequency */}
               <div>
                 <label htmlFor="backchannel-freq" className="form-label">
-                  Backchannel Frequency: <span className="text-primary-600 font-mono text-sm">{retellSettings.backchannel_frequency.toFixed(1)}</span>
+                  Backchannel Frequency: <span className="text-primary-600 font-mono text-sm">{(retellSettings.backchannel_frequency ?? DEFAULT_RETELL_SETTINGS.backchannel_frequency).toFixed(1)}</span>
                 </label>
                 <input
                   id="backchannel-freq"
@@ -153,7 +157,7 @@ export default function Configuration() {
                   min="0"
                   max="1"
                   step="0.1"
-                  value={retellSettings.backchannel_frequency}
+                  value={retellSettings.backchannel_frequency ?? DEFAULT_RETELL_SETTINGS.backchannel_frequency}
                   onChange={(e) => updateSetting('backchannel_frequency', parseFloat(e.target.value))}
                   className="w-full"
                   aria-label="Backchannel frequency slider"
@@ -167,7 +171,7 @@ export default function Configuration() {
               {/* Interruption Sensitivity */}
               <div>
                 <label htmlFor="interruption-sens" className="form-label">
-                  Interruption Sensitivity: <span className="text-primary-600 font-mono text-sm">{retellSettings.interruption_sensitivity.toFixed(1)}</span>
+                  Interruption Sensitivity: <span className="text-primary-600 font-mono text-sm">{(retellSettings.interruption_sensitivity ?? DEFAULT_RETELL_SETTINGS.interruption_sensitivity).toFixed(1)}</span>
                 </label>
                 <input
                   id="interruption-sens"
@@ -175,7 +179,7 @@ export default function Configuration() {
                   min="0"
                   max="1"
                   step="0.1"
-                  value={retellSettings.interruption_sensitivity}
+                  value={retellSettings.interruption_sensitivity ?? DEFAULT_RETELL_SETTINGS.interruption_sensitivity}
                   onChange={(e) => updateSetting('interruption_sensitivity', parseFloat(e.target.value))}
                   className="w-full"
                   aria-label="Interruption sensitivity slider"
@@ -186,7 +190,7 @@ export default function Configuration() {
               {/* Voice Speed */}
               <div>
                 <label htmlFor="voice-speed" className="form-label">
-                  Voice Speed: <span className="text-primary-600 font-mono text-sm">{retellSettings.voice_speed.toFixed(1)}</span>
+                  Voice Speed: <span className="text-primary-600 font-mono text-sm">{(retellSettings.voice_speed ?? DEFAULT_RETELL_SETTINGS.voice_speed).toFixed(1)}</span>
                 </label>
                 <input
                   id="voice-speed"
@@ -194,7 +198,7 @@ export default function Configuration() {
                   min="0.5"
                   max="2"
                   step="0.1"
-                  value={retellSettings.voice_speed}
+                  value={retellSettings.voice_speed ?? DEFAULT_RETELL_SETTINGS.voice_speed}
                   onChange={(e) => updateSetting('voice_speed', parseFloat(e.target.value))}
                   className="w-full"
                   aria-label="Voice speed slider"
@@ -208,7 +212,7 @@ export default function Configuration() {
               {/* Responsiveness */}
               <div>
                 <label htmlFor="responsiveness" className="form-label">
-                  Responsiveness: <span className="text-primary-600 font-mono text-sm">{retellSettings.responsiveness.toFixed(1)}</span>
+                  Responsiveness: <span className="text-primary-600 font-mono text-sm">{(retellSettings.responsiveness ?? DEFAULT_RETELL_SETTINGS.responsiveness).toFixed(1)}</span>
                 </label>
                 <input
                   id="responsiveness"
@@ -216,7 +220,7 @@ export default function Configuration() {
                   min="0"
                   max="1"
                   step="0.1"
-                  value={retellSettings.responsiveness}
+                  value={retellSettings.responsiveness ?? DEFAULT_RETELL_SETTINGS.responsiveness}
                   onChange={(e) => updateSetting('responsiveness', parseFloat(e.target.value))}
                   className="w-full"
                   aria-label="Responsiveness slider"
