@@ -1,20 +1,105 @@
+"""
+OpenAI client for transcript data extraction.
+"""
+
 import os
 from openai import AsyncOpenAI
 from typing import Dict, Any
+from constants import OPENAI_MODEL, OPENAI_TEMPERATURE
+from logger import service_logger
 import json
 
+
 class OpenAIExtractor:
+    """Client for extracting structured data from call transcripts using OpenAI."""
+    
     def __init__(self):
+        """Initialize OpenAI client."""
         self.api_key = os.getenv("OPENAI_API_KEY")
         if not self.api_key:
             raise ValueError("OPENAI_API_KEY must be set")
         
         self.client = AsyncOpenAI(api_key=self.api_key)
     
+    # PUBLIC_INTERFACE
     async def extract_checkin_data(self, transcript: str) -> Dict[str, Any]:
-        """Extract structured data from check-in call transcript"""
+        """
+        Extract structured data from check-in call transcript.
         
-        prompt = f"""Analyze this driver check-in call transcript and extract the following information.
+        Args:
+            transcript: Raw call transcript text
+            
+        Returns:
+            Dictionary with extracted check-in data fields
+        """
+        prompt = self._build_checkin_prompt(transcript)
+        
+        try:
+            response = await self.client.chat.completions.create(
+                model=OPENAI_MODEL,
+                messages=[
+                    {
+                        "role": "system",
+                        "content": "You are a data extraction assistant. Return only valid JSON."
+                    },
+                    {"role": "user", "content": prompt}
+                ],
+                temperature=OPENAI_TEMPERATURE,
+                response_format={"type": "json_object"}
+            )
+            
+            result = json.loads(response.choices[0].message.content)
+            service_logger.debug(f"Successfully extracted check-in data")
+            return result
+        except Exception as e:
+            service_logger.error(f"Error extracting check-in data: {e}")
+            raise
+    
+    # PUBLIC_INTERFACE
+    async def extract_emergency_data(self, transcript: str) -> Dict[str, Any]:
+        """
+        Extract structured data from emergency call transcript.
+        
+        Args:
+            transcript: Raw call transcript text
+            
+        Returns:
+            Dictionary with extracted emergency data fields
+        """
+        prompt = self._build_emergency_prompt(transcript)
+        
+        try:
+            response = await self.client.chat.completions.create(
+                model=OPENAI_MODEL,
+                messages=[
+                    {
+                        "role": "system",
+                        "content": "You are a data extraction assistant. Return only valid JSON."
+                    },
+                    {"role": "user", "content": prompt}
+                ],
+                temperature=OPENAI_TEMPERATURE,
+                response_format={"type": "json_object"}
+            )
+            
+            result = json.loads(response.choices[0].message.content)
+            service_logger.debug(f"Successfully extracted emergency data")
+            return result
+        except Exception as e:
+            service_logger.error(f"Error extracting emergency data: {e}")
+            raise
+    
+    def _build_checkin_prompt(self, transcript: str) -> str:
+        """
+        Build prompt for check-in data extraction.
+        
+        Args:
+            transcript: Call transcript
+            
+        Returns:
+            Formatted prompt string
+        """
+        return f"""Analyze this driver check-in call transcript and extract the following information.
 Return ONLY valid JSON with these exact fields:
 
 {{
@@ -35,24 +120,18 @@ Rules:
 Transcript:
 {transcript}
 """
-
-        response = await self.client.chat.completions.create(
-            model="gpt-4o",
-            messages=[
-                {"role": "system", "content": "You are a data extraction assistant. Return only valid JSON."},
-                {"role": "user", "content": prompt}
-            ],
-            temperature=0,
-            response_format={"type": "json_object"}
-        )
-        
-        result = json.loads(response.choices[0].message.content)
-        return result
     
-    async def extract_emergency_data(self, transcript: str) -> Dict[str, Any]:
-        """Extract structured data from emergency call transcript"""
+    def _build_emergency_prompt(self, transcript: str) -> str:
+        """
+        Build prompt for emergency data extraction.
         
-        prompt = f"""Analyze this emergency call transcript and extract the following information.
+        Args:
+            transcript: Call transcript
+            
+        Returns:
+            Formatted prompt string
+        """
+        return f"""Analyze this emergency call transcript and extract the following information.
 Return ONLY valid JSON with these exact fields:
 
 {{
@@ -74,18 +153,6 @@ Transcript:
 {transcript}
 """
 
-        response = await self.client.chat.completions.create(
-            model="gpt-4o",
-            messages=[
-                {"role": "system", "content": "You are a data extraction assistant. Return only valid JSON."},
-                {"role": "user", "content": prompt}
-            ],
-            temperature=0,
-            response_format={"type": "json_object"}
-        )
-        
-        result = json.loads(response.choices[0].message.content)
-        return result
 
-# Singleton
+# Singleton instance
 openai_extractor = OpenAIExtractor()
