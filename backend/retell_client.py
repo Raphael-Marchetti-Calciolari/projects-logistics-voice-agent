@@ -26,7 +26,8 @@ class RetellClient:
             response_engine={
                 "type": "retell-llm",
                 "llm_id": llm_id
-            }
+            },
+            enable_backchannel=True
         )
         return {
             "agent_id": agent.agent_id,
