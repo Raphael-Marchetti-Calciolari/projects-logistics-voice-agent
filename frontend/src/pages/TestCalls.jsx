@@ -40,20 +40,20 @@ export default function TestCalls() {
   if (webCallData) {
     return (
       <div className="max-w-2xl mx-auto">
-        <div className="bg-white shadow rounded-lg p-6">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">
+        <div className="bg-white shadow-sm rounded-lg border border-neutral-200 p-6">
+          <h2 className="text-2xl font-semibold text-neutral-900 mb-4">
             Web Call Active
           </h2>
           
-          <div className="mb-6 p-4 bg-blue-50 rounded-lg space-y-2">
-            <p className="text-sm text-gray-700">
-              <strong>Driver:</strong> {formData.driver_name}
+          <div className="mb-6 p-4 bg-primary-50 border border-primary-200 rounded-lg space-y-2">
+            <p className="text-sm text-neutral-700">
+              <strong className="font-medium text-neutral-900">Driver:</strong> {formData.driver_name}
             </p>
-            <p className="text-sm text-gray-700">
-              <strong>Load:</strong> {formData.load_number}
+            <p className="text-sm text-neutral-700">
+              <strong className="font-medium text-neutral-900">Load:</strong> {formData.load_number}
             </p>
-            <p className="text-sm text-gray-700">
-              <strong>Scenario:</strong> {formData.scenario_type}
+            <p className="text-sm text-neutral-700">
+              <strong className="font-medium text-neutral-900">Scenario:</strong> {formData.scenario_type}
             </p>
           </div>
 
@@ -65,7 +65,7 @@ export default function TestCalls() {
           <div className="mt-4 text-center">
             <button
               onClick={() => window.location.href = `/calls/${webCallData.call_id}`}
-              className="text-blue-600 hover:underline text-sm"
+              className="text-primary-600 hover:text-primary-700 hover:underline text-sm font-medium"
             >
               View Call Details
             </button>
@@ -77,23 +77,23 @@ export default function TestCalls() {
 
   return (
     <div className="max-w-2xl mx-auto">
-      <div className="bg-white shadow rounded-lg p-6">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">
+      <div className="bg-white shadow-sm rounded-lg border border-neutral-200 p-6">
+        <h2 className="text-2xl font-semibold text-neutral-900 mb-2">
           Test Web Call
         </h2>
-        <p className="text-gray-600 mb-6">
+        <p className="text-sm text-neutral-600 mb-6">
           Browser-based voice call (no phone number needed)
         </p>
 
         {error && (
-          <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-md">
-            <p className="text-red-800 text-sm">{error}</p>
+          <div className="mb-4 p-3 bg-error-50 border border-error-200 rounded-md">
+            <p className="text-error-700 text-sm">{error}</p>
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-neutral-700 mb-1.5">
               Driver Name
             </label>
             <input
@@ -102,13 +102,13 @@ export default function TestCalls() {
               value={formData.driver_name}
               onChange={handleChange}
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 border border-neutral-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
               placeholder="John Doe"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-neutral-700 mb-1.5">
               Load Number
             </label>
             <input
@@ -117,37 +117,37 @@ export default function TestCalls() {
               value={formData.load_number}
               onChange={handleChange}
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 border border-neutral-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
               placeholder="LOAD-12345"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-neutral-700 mb-2">
               Scenario Type
             </label>
-            <div className="flex space-x-4">
-              <label className="flex items-center">
+            <div className="flex space-x-2">
+              <label className="flex items-center min-w-[120px] px-4 py-2 border-2 border-neutral-300 rounded-md cursor-pointer transition-all hover:border-primary-500 has-[:checked]:border-primary-600 has-[:checked]:bg-primary-50">
                 <input
                   type="radio"
                   name="scenario_type"
                   value={SCENARIO_TYPES.CHECKIN}
                   checked={formData.scenario_type === SCENARIO_TYPES.CHECKIN}
                   onChange={handleChange}
-                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
+                  className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-neutral-300"
                 />
-                <span className="ml-2 text-sm text-gray-700">Check-in</span>
+                <span className="ml-2 text-sm text-neutral-700 font-medium">Check-in</span>
               </label>
-              <label className="flex items-center">
+              <label className="flex items-center min-w-[120px] px-4 py-2 border-2 border-neutral-300 rounded-md cursor-pointer transition-all hover:border-primary-500 has-[:checked]:border-primary-600 has-[:checked]:bg-primary-50">
                 <input
                   type="radio"
                   name="scenario_type"
                   value={SCENARIO_TYPES.EMERGENCY}
                   checked={formData.scenario_type === SCENARIO_TYPES.EMERGENCY}
                   onChange={handleChange}
-                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
+                  className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-neutral-300"
                 />
-                <span className="ml-2 text-sm text-gray-700">Emergency</span>
+                <span className="ml-2 text-sm text-neutral-700 font-medium">Emergency</span>
               </label>
             </div>
           </div>
@@ -156,7 +156,7 @@ export default function TestCalls() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full px-6 py-3 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="btn-primary w-full py-2.5"
             >
               {isLoading ? 'Preparing Call...' : 'Start Web Call'}
             </button>

@@ -20,11 +20,11 @@ class ErrorBoundary extends Component {
   render() {
     if (this.state.hasError) {
       return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-          <div className="max-w-md w-full bg-white shadow-lg rounded-lg p-6">
-            <div className="flex items-center justify-center w-12 h-12 mx-auto bg-red-100 rounded-full">
+        <div className="min-h-screen flex items-center justify-center bg-neutral-50 px-4">
+          <div className="max-w-md w-full bg-white shadow-sm border border-neutral-200 rounded-lg p-6">
+            <div className="flex items-center justify-center w-12 h-12 mx-auto bg-error-100 rounded-full">
               <svg
-                className="w-6 h-6 text-red-600"
+                className="w-6 h-6 text-error-600"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -37,15 +37,15 @@ class ErrorBoundary extends Component {
                 />
               </svg>
             </div>
-            <h2 className="mt-4 text-xl font-semibold text-center text-gray-900">
+            <h2 className="mt-4 text-xl font-semibold text-center text-neutral-900">
               Something went wrong
             </h2>
-            <p className="mt-2 text-sm text-center text-gray-600">
+            <p className="mt-2 text-sm text-center text-neutral-600">
               {this.state.error?.message || 'An unexpected error occurred'}
             </p>
             <button
               onClick={() => window.location.reload()}
-              className="mt-6 w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="mt-6 w-full px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 font-medium text-sm transition-colors"
             >
               Reload Page
             </button>

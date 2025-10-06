@@ -8,44 +8,47 @@ export default function Layout({ children }) {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-neutral-50">
       {/* Navigation */}
-      <nav className="bg-white shadow-sm border-b">
+      <nav className="bg-white border-b border-neutral-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
-            <div className="flex">
-              <div className="flex-shrink-0 flex items-center">
-                <h1 className="text-xl font-bold text-gray-900">
+            <div className="flex items-center">
+              {/* Logo/Title */}
+              <div className="flex-shrink-0 flex items-center mr-8">
+                <h1 className="text-lg font-semibold text-neutral-900 tracking-tight">
                   Logistics Voice Agent
                 </h1>
               </div>
-              <div className="ml-10 flex space-x-4 items-center">
+
+              {/* Navigation Tabs */}
+              <div className="flex space-x-1">
                 <Link
                   to="/"
-                  className={`px-3 py-2 rounded-md text-sm font-medium ${
+                  className={`tab-link ${
                     isActive('/')
-                      ? 'bg-blue-100 text-blue-700'
-                      : 'text-gray-700 hover:bg-gray-100'
+                      ? 'tab-link-active'
+                      : 'tab-link-inactive'
                   }`}
                 >
                   Configuration
                 </Link>
                 <Link
                   to="/test"
-                  className={`px-3 py-2 rounded-md text-sm font-medium ${
+                  className={`tab-link ${
                     isActive('/test')
-                      ? 'bg-blue-100 text-blue-700'
-                      : 'text-gray-700 hover:bg-gray-100'
+                      ? 'tab-link-active'
+                      : 'tab-link-inactive'
                   }`}
                 >
                   Test Calls
                 </Link>
                 <Link
                   to="/previous-calls"
-                  className={`px-3 py-2 rounded-md text-sm font-medium ${
+                  className={`tab-link ${
                     isActive('/previous-calls')
-                      ? 'bg-blue-100 text-blue-700'
-                      : 'text-gray-700 hover:bg-gray-100'
+                      ? 'tab-link-active'
+                      : 'tab-link-inactive'
                   }`}
                 >
                   Previous Calls

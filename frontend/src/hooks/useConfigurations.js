@@ -22,8 +22,8 @@ export const useConfigurations = (scenarioType) => {
       const config = await configurationsAPI.getConfiguration(scenarioType);
       setConfiguration(config);
       return config;
-    } catch (err) {
-      if (err.response?.status === 404) {
+    } catch (error) {
+      if (error.response?.status === 404) {
         // No config exists yet, return null
         setConfiguration(null);
         return null;
@@ -50,8 +50,8 @@ export const useConfigurations = (scenarioType) => {
       setTimeout(() => setSuccess(false), 3000);
       
       return result;
-    } catch (err) {
-      const errorMessage = err.response?.data?.detail || 'Failed to save configuration';
+    } catch (error) {
+      const errorMessage = error.response?.data?.detail || 'Failed to save configuration';
       setError(errorMessage);
       throw new Error(errorMessage);
     } finally {
@@ -66,7 +66,7 @@ export const useConfigurations = (scenarioType) => {
     try {
       const configs = await configurationsAPI.listConfigurations();
       return configs;
-    } catch (err) {
+    } catch {
       const errorMessage = 'Failed to list configurations';
       setError(errorMessage);
       throw new Error(errorMessage);

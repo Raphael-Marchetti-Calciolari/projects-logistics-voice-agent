@@ -2,16 +2,83 @@
 @tailwind components;
 @tailwind utilities;
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+@layer base {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    @apply font-sans text-neutral-800 antialiased;
+    font-feature-settings: 'cv11', 'ss01';
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold text-neutral-900;
+    letter-spacing: -0.02em;
+  }
+
+  h1 {
+    @apply text-3xl;
+  }
+
+  h2 {
+    @apply text-2xl;
+  }
+
+  h3 {
+    @apply text-xl;
+  }
+
+  h4 {
+    @apply text-lg;
+  }
 }
 
-body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@layer components {
+  /* Tab/Button component styles */
+  .tab-link {
+    @apply inline-flex items-center justify-center;
+    @apply px-4 py-2 rounded-md;
+    @apply text-sm font-medium;
+    @apply transition-all duration-150 ease-in-out;
+    @apply min-w-[120px];
+    @apply text-center;
+  }
+
+  .tab-link-active {
+    @apply bg-primary-600 text-white shadow-sm;
+  }
+
+  .tab-link-inactive {
+    @apply text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900;
+  }
+
+  /* Button styles */
+  .btn-primary {
+    @apply inline-flex items-center justify-center;
+    @apply px-4 py-2 rounded-md;
+    @apply text-sm font-medium;
+    @apply bg-primary-600 text-white;
+    @apply hover:bg-primary-700;
+    @apply focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500;
+    @apply transition-colors duration-150;
+    @apply disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center;
+    @apply px-4 py-2 rounded-md;
+    @apply text-sm font-medium;
+    @apply bg-neutral-100 text-neutral-700;
+    @apply hover:bg-neutral-200;
+    @apply focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-neutral-500;
+    @apply transition-colors duration-150;
+  }
+
+  /* Status badge styles */
+  .status-badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
 }

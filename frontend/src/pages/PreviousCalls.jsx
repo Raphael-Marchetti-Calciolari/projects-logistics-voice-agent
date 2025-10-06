@@ -57,18 +57,18 @@ export default function PreviousCalls() {
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-64">
-        <div className="text-gray-500">Loading previous calls...</div>
+        <div className="text-neutral-500 text-sm">Loading previous calls...</div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="bg-red-50 border border-red-200 rounded-lg p-6">
-        <p className="text-red-800">{error}</p>
+      <div className="bg-error-50 border border-error-200 rounded-lg p-6">
+        <p className="text-error-700">{error}</p>
         <button
           onClick={loadCalls}
-          className="mt-4 text-blue-600 hover:underline text-sm"
+          className="mt-4 text-primary-600 hover:text-primary-700 hover:underline text-sm font-medium"
         >
           Try Again
         </button>
@@ -79,21 +79,21 @@ export default function PreviousCalls() {
   return (
     <div className="max-w-6xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-gray-900">Previous Calls</h2>
+        <h2 className="text-2xl font-semibold text-neutral-900">Previous Calls</h2>
         <button
           onClick={loadCalls}
-          className="text-blue-600 hover:underline text-sm"
+          className="text-primary-600 hover:text-primary-700 hover:underline text-sm font-medium"
         >
           Refresh
         </button>
       </div>
 
       {/* Search and Sort Controls */}
-      <div className="bg-white shadow rounded-lg p-4">
+      <div className="bg-white shadow-sm rounded-lg border border-neutral-200 p-4">
         <div className="flex flex-col sm:flex-row gap-4">
           {/* Search by Driver Name */}
           <div className="flex-1">
-            <label htmlFor="search" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="search" className="block text-sm font-medium text-neutral-700 mb-1.5">
               Search by Driver Name
             </label>
             <input
@@ -102,18 +102,18 @@ export default function PreviousCalls() {
               value={searchQuery}
               onChange={handleSearchChange}
               placeholder="Enter driver name..."
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 border border-neutral-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
             />
           </div>
 
           {/* Sort by Time */}
           <div className="flex flex-col justify-end">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-neutral-700 mb-1.5">
               Sort by Time
             </label>
             <button
               onClick={handleSortToggle}
-              className="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center justify-center"
+              className="min-w-[160px] px-4 py-2 bg-neutral-100 text-neutral-700 rounded-md hover:bg-neutral-200 focus:outline-none focus:ring-2 focus:ring-primary-500 flex items-center justify-center text-sm font-medium transition-colors"
             >
               {sortOrder === 'desc' ? (
                 <>
@@ -135,77 +135,77 @@ export default function PreviousCalls() {
         </div>
 
         {/* Results Count */}
-        <div className="mt-4 text-sm text-gray-600">
+        <div className="mt-4 text-xs text-neutral-600">
           Showing {filteredCalls.length} of {calls.length} call{calls.length !== 1 ? 's' : ''}
         </div>
       </div>
 
       {/* Calls List */}
       {filteredCalls.length === 0 ? (
-        <div className="bg-white shadow rounded-lg p-8 text-center">
-          <p className="text-gray-500">
+        <div className="bg-white shadow-sm rounded-lg border border-neutral-200 p-8 text-center">
+          <p className="text-neutral-500 text-sm">
             {searchQuery ? 'No calls found matching your search.' : 'No previous calls found.'}
           </p>
           {searchQuery && (
             <button
               onClick={() => setSearchQuery('')}
-              className="mt-4 text-blue-600 hover:underline text-sm"
+              className="mt-4 text-primary-600 hover:text-primary-700 hover:underline text-sm font-medium"
             >
               Clear Search
             </button>
           )}
         </div>
       ) : (
-        <div className="bg-white shadow rounded-lg overflow-hidden">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+        <div className="bg-white shadow-sm rounded-lg border border-neutral-200 overflow-hidden">
+          <table className="min-w-full divide-y divide-neutral-200">
+            <thead className="bg-neutral-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-semibold text-neutral-700 uppercase tracking-wider">
                   Driver Name
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-semibold text-neutral-700 uppercase tracking-wider">
                   Load Number
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-semibold text-neutral-700 uppercase tracking-wider">
                   Scenario
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-semibold text-neutral-700 uppercase tracking-wider">
                   Status
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-semibold text-neutral-700 uppercase tracking-wider">
                   Time
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-semibold text-neutral-700 uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-white divide-y divide-neutral-200">
               {filteredCalls.map((call) => {
                 const statusConfig = getStatusConfig(call.call_status, CALL_STATUS_CONFIG);
                 return (
-                  <tr key={call.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  <tr key={call.id} className="hover:bg-neutral-50 transition-colors">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-neutral-900">
                       {call.driver_name}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-600">
                       {call.load_number}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 capitalize">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-600 capitalize">
                       {call.scenario_type}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${statusConfig.className}`}>
+                      <span className={`status-badge ${statusConfig.className}`}>
                         {statusConfig.label}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-600">
                       {formatDate(call.created_at)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
                       <Link
                         to={`/calls/${call.id}`}
-                        className="text-blue-600 hover:text-blue-800 hover:underline"
+                        className="text-primary-600 hover:text-primary-700 hover:underline font-medium"
                       >
                         View Details
                       </Link>

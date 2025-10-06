@@ -62,13 +62,16 @@ export default function RetellWebCall({ accessToken, onCallEnd }) {
   };
 
   return (
-    <div className="bg-white border-2 border-blue-200 rounded-lg p-6">
+    <div className="bg-white border-2 border-primary-200 rounded-lg p-6">
       <div className="text-center mb-4">
-        <div className={`inline-block px-4 py-2 rounded-full text-sm font-medium ${
+        <div className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-medium ${
           isCallActive 
-            ? 'bg-green-100 text-green-800' 
-            : 'bg-gray-100 text-gray-800'
+            ? 'bg-success-100 text-success-700' 
+            : 'bg-neutral-100 text-neutral-700'
         }`}>
+          {isCallActive && (
+            <span className="w-2 h-2 bg-success-500 rounded-full mr-2 animate-pulse"></span>
+          )}
           {callStatus}
         </div>
       </div>
@@ -76,20 +79,20 @@ export default function RetellWebCall({ accessToken, onCallEnd }) {
       {!isCallActive ? (
         <button
           onClick={startCall}
-          className="w-full px-6 py-3 bg-green-600 text-white font-medium rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+          className="w-full px-6 py-3 bg-success-600 text-white font-medium rounded-md hover:bg-success-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-success-500 transition-colors"
         >
           Start Web Call
         </button>
       ) : (
         <button
           onClick={stopCall}
-          className="w-full px-6 py-3 bg-red-600 text-white font-medium rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+          className="w-full px-6 py-3 bg-error-600 text-white font-medium rounded-md hover:bg-error-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-error-500 transition-colors"
         >
           End Call
         </button>
       )}
 
-      <p className="text-xs text-gray-500 mt-4 text-center">
+      <p className="text-xs text-neutral-500 mt-4 text-center">
         Make sure to allow microphone access in your browser
       </p>
     </div>

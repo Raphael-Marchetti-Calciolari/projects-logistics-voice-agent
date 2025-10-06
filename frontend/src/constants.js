@@ -16,23 +16,23 @@ export const CALL_STATUS = {
   FAILED: 'failed',
 };
 
-// Call status display configuration
+// Call status display configuration with refined color palette
 export const CALL_STATUS_CONFIG = {
   [CALL_STATUS.INITIATED]: {
     label: 'Initiated',
-    className: 'bg-yellow-100 text-yellow-800',
+    className: 'bg-warning-100 text-warning-700',
   },
   [CALL_STATUS.IN_PROGRESS]: {
     label: 'In Progress',
-    className: 'bg-blue-100 text-blue-800',
+    className: 'bg-primary-100 text-primary-700',
   },
   [CALL_STATUS.COMPLETED]: {
     label: 'Completed',
-    className: 'bg-green-100 text-green-800',
+    className: 'bg-success-100 text-success-700',
   },
   [CALL_STATUS.FAILED]: {
     label: 'Failed',
-    className: 'bg-red-100 text-red-800',
+    className: 'bg-error-100 text-error-700',
   },
 };
 

@@ -42,16 +42,16 @@ export default function CallResults() {
   if (isLoading && !call) {
     return (
       <div className="flex justify-center items-center h-64">
-        <div className="text-gray-500">Loading call details...</div>
+        <div className="text-neutral-500 text-sm">Loading call details...</div>
       </div>
     );
   }
 
   if (error || !call) {
     return (
-      <div className="bg-red-50 border border-red-200 rounded-lg p-6">
-        <p className="text-red-800">{error || 'Call not found'}</p>
-        <Link to="/test" className="text-blue-600 hover:underline mt-2 inline-block">
+      <div className="bg-error-50 border border-error-200 rounded-lg p-6">
+        <p className="text-error-700">{error || 'Call not found'}</p>
+        <Link to="/test" className="text-primary-600 hover:text-primary-700 hover:underline mt-2 inline-block text-sm font-medium">
           Back to Test Calls
         </Link>
       </div>
@@ -63,72 +63,72 @@ export default function CallResults() {
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-gray-900">Call Details</h2>
-        <Link to="/test" className="text-blue-600 hover:underline text-sm">
+        <h2 className="text-2xl font-semibold text-neutral-900">Call Details</h2>
+        <Link to="/test" className="text-primary-600 hover:text-primary-700 hover:underline text-sm font-medium">
           Back to Test Calls
         </Link>
       </div>
 
       {/* Call Information */}
-      <div className="bg-white shadow rounded-lg p-6">
+      <div className="bg-white shadow-sm rounded-lg border border-neutral-200 p-6">
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <p className="text-sm text-gray-500">Driver Name</p>
-            <p className="font-medium text-gray-900">{call.driver_name}</p>
+            <p className="text-xs font-medium text-neutral-500 uppercase tracking-wider mb-1">Driver Name</p>
+            <p className="text-sm font-medium text-neutral-900">{call.driver_name}</p>
           </div>
           <div>
-            <p className="text-sm text-gray-500">Phone Number</p>
-            <p className="font-medium text-gray-900">{call.driver_phone}</p>
+            <p className="text-xs font-medium text-neutral-500 uppercase tracking-wider mb-1">Phone Number</p>
+            <p className="text-sm font-medium text-neutral-900">{call.driver_phone}</p>
           </div>
           <div>
-            <p className="text-sm text-gray-500">Load Number</p>
-            <p className="font-medium text-gray-900">{call.load_number}</p>
+            <p className="text-xs font-medium text-neutral-500 uppercase tracking-wider mb-1">Load Number</p>
+            <p className="text-sm font-medium text-neutral-900">{call.load_number}</p>
           </div>
           <div>
-            <p className="text-sm text-gray-500">Scenario</p>
-            <p className="font-medium text-gray-900 capitalize">{call.scenario_type}</p>
+            <p className="text-xs font-medium text-neutral-500 uppercase tracking-wider mb-1">Scenario</p>
+            <p className="text-sm font-medium text-neutral-900 capitalize">{call.scenario_type}</p>
           </div>
           <div>
-            <p className="text-sm text-gray-500">Status</p>
-            <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${statusConfig.className}`}>
+            <p className="text-xs font-medium text-neutral-500 uppercase tracking-wider mb-1">Status</p>
+            <span className={`status-badge ${statusConfig.className}`}>
               {statusConfig.label}
             </span>
           </div>
           <div>
-            <p className="text-sm text-gray-500">Created</p>
-            <p className="font-medium text-gray-900">{formatDate(call.created_at)}</p>
+            <p className="text-xs font-medium text-neutral-500 uppercase tracking-wider mb-1">Created</p>
+            <p className="text-sm font-medium text-neutral-900">{formatDate(call.created_at)}</p>
           </div>
         </div>
 
         {call.retell_call_id && (
-          <div className="mt-4 pt-4 border-t">
-            <p className="text-sm text-gray-500">Retell Call ID</p>
-            <p className="font-mono text-xs text-gray-700">{call.retell_call_id}</p>
+          <div className="mt-4 pt-4 border-t border-neutral-200">
+            <p className="text-xs font-medium text-neutral-500 uppercase tracking-wider mb-1">Retell Call ID</p>
+            <p className="font-mono text-xs text-neutral-700">{call.retell_call_id}</p>
           </div>
         )}
       </div>
 
       {/* Transcript */}
       {call.raw_transcript && (
-        <div className="bg-white shadow rounded-lg p-6">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">Transcript</h3>
-          <div className="bg-gray-50 rounded p-4">
-            <p className="text-gray-800 whitespace-pre-wrap">{call.raw_transcript}</p>
+        <div className="bg-white shadow-sm rounded-lg border border-neutral-200 p-6">
+          <h3 className="text-lg font-medium text-neutral-900 mb-4">Transcript</h3>
+          <div className="bg-neutral-50 rounded-md p-4 border border-neutral-200">
+            <p className="text-sm text-neutral-800 whitespace-pre-wrap leading-relaxed">{call.raw_transcript}</p>
           </div>
         </div>
       )}
 
       {/* Extracted Data */}
       {call.structured_data && (
-        <div className="bg-white shadow rounded-lg p-6">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">Extracted Data</h3>
+        <div className="bg-white shadow-sm rounded-lg border border-neutral-200 p-6">
+          <h3 className="text-lg font-medium text-neutral-900 mb-4">Extracted Data</h3>
           <div className="space-y-3">
             {Object.entries(call.structured_data).map(([key, value]) => (
               <div key={key} className="flex">
-                <span className="text-sm font-medium text-gray-500 w-1/3">
+                <span className="text-sm font-medium text-neutral-500 w-1/3">
                   {formatFieldName(key)}:
                 </span>
-                <span className="text-sm text-gray-900 w-2/3">
+                <span className="text-sm text-neutral-900 w-2/3">
                   {typeof value === 'boolean' ? formatBoolean(value) : value}
                 </span>
               </div>
@@ -139,8 +139,8 @@ export default function CallResults() {
 
       {/* Status Messages */}
       {!call.raw_transcript && call.call_status !== CALL_STATUS.FAILED && (
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <p className="text-blue-800 text-sm">
+        <div className="bg-primary-50 border border-primary-200 rounded-lg p-4">
+          <p className="text-primary-700 text-sm">
             {call.call_status === CALL_STATUS.COMPLETED
               ? 'Call completed. Transcript processing...'
               : 'Call in progress. Updates will appear automatically.'}

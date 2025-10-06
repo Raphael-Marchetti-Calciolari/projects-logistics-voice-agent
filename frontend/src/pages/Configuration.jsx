@@ -52,49 +52,49 @@ export default function Configuration() {
   if (isLoading && !configuration) {
     return (
       <div className="flex justify-center items-center h-64">
-        <div className="text-gray-500">Loading configuration...</div>
+        <div className="text-neutral-500 text-sm">Loading configuration...</div>
       </div>
     );
   }
 
   return (
     <div className="max-w-4xl mx-auto">
-      <div className="bg-white shadow rounded-lg p-6">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">
+      <div className="bg-white shadow-sm rounded-lg border border-neutral-200 p-6">
+        <h2 className="text-2xl font-semibold text-neutral-900 mb-2">
           Agent Configuration
         </h2>
-        <p className="text-gray-600 mb-6">
+        <p className="text-sm text-neutral-600 mb-6">
           Configure system prompts and voice settings for AI agents
         </p>
 
         {error && (
-          <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-md">
-            <p className="text-red-800 text-sm">{error}</p>
+          <div className="mb-4 p-3 bg-error-50 border border-error-200 rounded-md">
+            <p className="text-error-700 text-sm">{error}</p>
           </div>
         )}
 
         {success && (
-          <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-md">
-            <p className="text-green-800 text-sm">Configuration saved successfully!</p>
+          <div className="mb-4 p-3 bg-success-50 border border-success-200 rounded-md">
+            <p className="text-success-700 text-sm">Configuration saved successfully!</p>
           </div>
         )}
 
         <form onSubmit={handleSave} className="space-y-6">
           {/* Scenario Type Selector */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-neutral-700 mb-2">
               Scenario Type
             </label>
-            <div className="flex space-x-4">
+            <div className="flex space-x-2">
               {Object.values(SCENARIO_TYPES).map((type) => (
                 <button
                   key={type}
                   type="button"
                   onClick={() => handleScenarioChange(type)}
-                  className={`px-4 py-2 rounded-md text-sm font-medium ${
+                  className={`min-w-[120px] px-4 py-2 rounded-md text-sm font-medium transition-all duration-150 ${
                     scenarioType === type
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                      ? 'bg-primary-600 text-white shadow-sm'
+                      : 'bg-neutral-100 text-neutral-700 hover:bg-neutral-200'
                   }`}
                 >
                   {type.charAt(0).toUpperCase() + type.slice(1)}
@@ -105,7 +105,7 @@ export default function Configuration() {
 
           {/* System Prompt */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-neutral-700 mb-2">
               System Prompt
             </label>
             <textarea
@@ -113,17 +113,17 @@ export default function Configuration() {
               onChange={(e) => setSystemPrompt(e.target.value)}
               required
               rows={12}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 font-mono text-sm"
+              className="w-full px-3 py-2 border border-neutral-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent font-mono"
               placeholder="Enter the system prompt that guides the agent's conversation..."
             />
-            <p className="mt-1 text-xs text-gray-500">
+            <p className="mt-1.5 text-xs text-neutral-500">
               This prompt defines how the agent behaves during calls
             </p>
           </div>
 
           {/* Voice Settings */}
-          <div className="border-t pt-6">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Voice Settings</h3>
+          <div className="border-t border-neutral-200 pt-6">
+            <h3 className="text-lg font-medium text-neutral-900 mb-4">Voice Settings</h3>
 
             {/* Enable Backchannel */}
             <div className="mb-4">
@@ -132,17 +132,17 @@ export default function Configuration() {
                   type="checkbox"
                   checked={retellSettings.enable_backchannel}
                   onChange={(e) => updateSetting('enable_backchannel', e.target.checked)}
-                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                  className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-neutral-300 rounded"
                 />
-                <span className="ml-2 text-sm text-gray-700">Enable Backchannel</span>
+                <span className="ml-2 text-sm text-neutral-700">Enable Backchannel</span>
               </label>
-              <p className="ml-6 text-xs text-gray-500">Natural sounds like "mm-hmm" during conversation</p>
+              <p className="ml-6 text-xs text-neutral-500 mt-0.5">Natural sounds like "mm-hmm" during conversation</p>
             </div>
 
             {/* Backchannel Frequency */}
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Backchannel Frequency: {retellSettings.backchannel_frequency}
+              <label className="block text-sm font-medium text-neutral-700 mb-1.5">
+                Backchannel Frequency: <span className="text-primary-600 font-mono">{retellSettings.backchannel_frequency}</span>
               </label>
               <input
                 type="range"
@@ -151,14 +151,14 @@ export default function Configuration() {
                 step="0.1"
                 value={retellSettings.backchannel_frequency}
                 onChange={(e) => updateSetting('backchannel_frequency', parseFloat(e.target.value))}
-                className="w-full"
+                className="w-full h-2 bg-neutral-200 rounded-lg appearance-none cursor-pointer accent-primary-600"
               />
             </div>
 
             {/* Interruption Sensitivity */}
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Interruption Sensitivity: {retellSettings.interruption_sensitivity}
+              <label className="block text-sm font-medium text-neutral-700 mb-1.5">
+                Interruption Sensitivity: <span className="text-primary-600 font-mono">{retellSettings.interruption_sensitivity}</span>
               </label>
               <input
                 type="range"
@@ -167,15 +167,15 @@ export default function Configuration() {
                 step="0.1"
                 value={retellSettings.interruption_sensitivity}
                 onChange={(e) => updateSetting('interruption_sensitivity', parseFloat(e.target.value))}
-                className="w-full"
+                className="w-full h-2 bg-neutral-200 rounded-lg appearance-none cursor-pointer accent-primary-600"
               />
-              <p className="text-xs text-gray-500">How easily the agent can be interrupted</p>
+              <p className="text-xs text-neutral-500 mt-0.5">How easily the agent can be interrupted</p>
             </div>
 
             {/* Voice Speed */}
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Voice Speed: {retellSettings.voice_speed}
+              <label className="block text-sm font-medium text-neutral-700 mb-1.5">
+                Voice Speed: <span className="text-primary-600 font-mono">{retellSettings.voice_speed}</span>
               </label>
               <input
                 type="range"
@@ -184,14 +184,14 @@ export default function Configuration() {
                 step="0.1"
                 value={retellSettings.voice_speed}
                 onChange={(e) => updateSetting('voice_speed', parseFloat(e.target.value))}
-                className="w-full"
+                className="w-full h-2 bg-neutral-200 rounded-lg appearance-none cursor-pointer accent-primary-600"
               />
             </div>
 
             {/* Responsiveness */}
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Responsiveness: {retellSettings.responsiveness}
+              <label className="block text-sm font-medium text-neutral-700 mb-1.5">
+                Responsiveness: <span className="text-primary-600 font-mono">{retellSettings.responsiveness}</span>
               </label>
               <input
                 type="range"
@@ -200,9 +200,9 @@ export default function Configuration() {
                 step="0.1"
                 value={retellSettings.responsiveness}
                 onChange={(e) => updateSetting('responsiveness', parseFloat(e.target.value))}
-                className="w-full"
+                className="w-full h-2 bg-neutral-200 rounded-lg appearance-none cursor-pointer accent-primary-600"
               />
-              <p className="text-xs text-gray-500">How quickly agent responds</p>
+              <p className="text-xs text-neutral-500 mt-0.5">How quickly agent responds</p>
             </div>
           </div>
 
@@ -211,7 +211,7 @@ export default function Configuration() {
             <button
               type="submit"
               disabled={isSaving}
-              className="w-full px-6 py-3 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="btn-primary w-full py-2.5"
             >
               {isSaving ? 'Saving...' : 'Save Configuration'}
             </button>
