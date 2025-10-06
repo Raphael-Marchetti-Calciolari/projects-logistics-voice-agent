@@ -157,6 +157,30 @@ class DatabaseService:
             raise
     
     # PUBLIC_INTERFACE
+    def list_call_logs(self, order_by: str = "created_at", ascending: bool = False) -> List[Dict[str, Any]]:
+        """
+        List all call logs with optional ordering.
+        
+        Args:
+            order_by: Field to order by (default: created_at)
+            ascending: Sort order direction (default: False for descending)
+            
+        Returns:
+            List of call log dictionaries
+        """
+        try:
+            query = supabase.table(TABLE_CALL_LOGS).select("*")
+            
+            # Apply ordering
+            query = query.order(order_by, desc=not ascending)
+            
+            result = query.execute()
+            return result.data
+        except Exception as e:
+            service_logger.error(f"Error listing call logs: {e}")
+            raise
+    
+    # PUBLIC_INTERFACE
     def save_configuration(
         self, 
         scenario_type: str, 

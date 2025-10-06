@@ -2,7 +2,7 @@
 FastAPI router for call-related endpoints.
 """
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel, Field
 from services.call_service import call_service
 from services.database_service import db_service
@@ -105,6 +105,33 @@ async def initiate_call(request: CallInitiateRequest):
         raise
     except Exception as e:
         router_logger.error(f"Unexpected error in phone call initiation: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# PUBLIC_INTERFACE
+@router.get("", summary="List all calls")
+async def list_calls(
+    order_by: str = Query(default="created_at", description="Field to order by"),
+    ascending: bool = Query(default=False, description="Sort order (true=ascending, false=descending)")
+):
+    """
+    List all call logs with optional ordering.
+    
+    Args:
+        order_by: Field to order by (default: created_at)
+        ascending: Sort order direction (default: False for descending)
+        
+    Returns:
+        List of call logs
+        
+    Raises:
+        HTTPException: If listing fails
+    """
+    try:
+        calls = db_service.list_call_logs(order_by=order_by, ascending=ascending)
+        return calls
+    except Exception as e:
+        router_logger.error(f"Error listing calls: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail=str(e))
 
 

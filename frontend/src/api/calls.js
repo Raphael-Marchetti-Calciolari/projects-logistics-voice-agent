@@ -18,4 +18,12 @@ export const callsAPI = {
     const response = await apiClient.get(`/api/calls/${callId}`);
     return response.data;
   },
+
+  // List all calls with optional ordering
+  listCalls: async (orderBy = 'created_at', ascending = false) => {
+    const response = await apiClient.get('/api/calls', {
+      params: { order_by: orderBy, ascending }
+    });
+    return response.data;
+  },
 };
