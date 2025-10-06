@@ -1,37 +1,45 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { callsAPI } from '../api/calls';
+import { useCalls } from '../hooks/useCalls';
+import { formatDate, formatFieldName, formatBoolean, getStatusConfig } from '../utils/formatters';
+import { CALL_STATUS, CALL_STATUS_CONFIG, POLLING_INTERVALS } from '../constants';
 
 export default function CallResults() {
   const { id } = useParams();
   const [call, setCall] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const { getCall, isLoading, error } = useCalls();
+
+  const loadCall = useCallback(async () => {
+    try {
+      const data = await getCall(id);
+      setCall(data);
+    } catch (err) {
+      console.error('Failed to load call:', err);
+    }
+  }, [id, getCall]);
 
   useEffect(() => {
     loadCall();
-    
+  }, [loadCall]);
+
+  // Poll for updates if call is in progress
+  useEffect(() => {
+    if (!call) return;
+
+    const shouldPoll = 
+      call.call_status === CALL_STATUS.INITIATED || 
+      call.call_status === CALL_STATUS.IN_PROGRESS;
+
+    if (!shouldPoll) return;
+
     const interval = setInterval(() => {
-      if (call?.call_status === 'initiated' || call?.call_status === 'in_progress') {
-        loadCall();
-      }
-    }, 3000);
+      loadCall();
+    }, POLLING_INTERVALS.CALL_STATUS);
 
     return () => clearInterval(interval);
-  }, [id, call?.call_status]);
+  }, [call, loadCall]);
 
-  const loadCall = async () => {
-    try {
-      const data = await callsAPI.getCall(id);
-      setCall(data);
-    } catch (err) {
-      setError('Failed to load call details');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  if (isLoading) {
+  if (isLoading && !call) {
     return (
       <div className="flex justify-center items-center h-64">
         <div className="text-gray-500">Loading call details...</div>
@@ -50,20 +58,7 @@ export default function CallResults() {
     );
   }
 
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'initiated':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'in_progress':
-        return 'bg-blue-100 text-blue-800';
-      case 'completed':
-        return 'bg-green-100 text-green-800';
-      case 'failed':
-        return 'bg-red-100 text-red-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
-  };
+  const statusConfig = getStatusConfig(call.call_status, CALL_STATUS_CONFIG);
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
@@ -74,6 +69,7 @@ export default function CallResults() {
         </Link>
       </div>
 
+      {/* Call Information */}
       <div className="bg-white shadow rounded-lg p-6">
         <div className="grid grid-cols-2 gap-4">
           <div>
@@ -94,15 +90,13 @@ export default function CallResults() {
           </div>
           <div>
             <p className="text-sm text-gray-500">Status</p>
-            <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(call.call_status)}`}>
-              {call.call_status}
+            <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${statusConfig.className}`}>
+              {statusConfig.label}
             </span>
           </div>
           <div>
             <p className="text-sm text-gray-500">Created</p>
-            <p className="font-medium text-gray-900">
-              {new Date(call.created_at).toLocaleString()}
-            </p>
+            <p className="font-medium text-gray-900">{formatDate(call.created_at)}</p>
           </div>
         </div>
 
@@ -114,6 +108,7 @@ export default function CallResults() {
         )}
       </div>
 
+      {/* Transcript */}
       {call.raw_transcript && (
         <div className="bg-white shadow rounded-lg p-6">
           <h3 className="text-lg font-medium text-gray-900 mb-4">Transcript</h3>
@@ -123,17 +118,18 @@ export default function CallResults() {
         </div>
       )}
 
+      {/* Extracted Data */}
       {call.structured_data && (
         <div className="bg-white shadow rounded-lg p-6">
           <h3 className="text-lg font-medium text-gray-900 mb-4">Extracted Data</h3>
           <div className="space-y-3">
             {Object.entries(call.structured_data).map(([key, value]) => (
               <div key={key} className="flex">
-                <span className="text-sm font-medium text-gray-500 w-1/3 capitalize">
-                  {key.replace(/_/g, ' ')}:
+                <span className="text-sm font-medium text-gray-500 w-1/3">
+                  {formatFieldName(key)}:
                 </span>
                 <span className="text-sm text-gray-900 w-2/3">
-                  {typeof value === 'boolean' ? (value ? 'Yes' : 'No') : value}
+                  {typeof value === 'boolean' ? formatBoolean(value) : value}
                 </span>
               </div>
             ))}
@@ -141,10 +137,11 @@ export default function CallResults() {
         </div>
       )}
 
-      {!call.raw_transcript && call.call_status !== 'failed' && (
+      {/* Status Messages */}
+      {!call.raw_transcript && call.call_status !== CALL_STATUS.FAILED && (
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
           <p className="text-blue-800 text-sm">
-            {call.call_status === 'completed' 
+            {call.call_status === CALL_STATUS.COMPLETED
               ? 'Call completed. Transcript processing...'
               : 'Call in progress. Updates will appear automatically.'}
           </p>

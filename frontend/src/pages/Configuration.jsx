@@ -1,87 +1,55 @@
 import { useState, useEffect } from 'react';
-import { configurationsAPI } from '../api/configurations';
+import { useConfigurations } from '../hooks/useConfigurations';
+import { SCENARIO_TYPES, DEFAULT_RETELL_SETTINGS } from '../constants';
 
 export default function Configuration() {
-  const [scenarioType, setScenarioType] = useState('checkin');
+  const [scenarioType, setScenarioType] = useState(SCENARIO_TYPES.CHECKIN);
   const [systemPrompt, setSystemPrompt] = useState('');
-  const [retellSettings, setRetellSettings] = useState({
-    enable_backchannel: true,
-    backchannel_frequency: 0.8,
-    interruption_sensitivity: 0.7,
-    ambient_sound: 'off',
-    ambient_sound_volume: 0.3,
-    voice_temperature: 1.0,
-    voice_speed: 1.0,
-    responsiveness: 1.0,
-    voice_id: '11labs-Adrian',
-  });
-  const [isLoading, setIsLoading] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
-  const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(false);
+  const [retellSettings, setRetellSettings] = useState(DEFAULT_RETELL_SETTINGS);
 
+  const {
+    configuration,
+    isLoading,
+    isSaving,
+    error,
+    success,
+    saveConfiguration,
+  } = useConfigurations(scenarioType);
+
+  // Update form when configuration loads
   useEffect(() => {
-    loadConfiguration();
-  }, [scenarioType]);
-
-  const loadConfiguration = async () => {
-    setIsLoading(true);
-    setError(null);
-    setSuccess(false);
-
-    try {
-      const config = await configurationsAPI.getConfiguration(scenarioType);
-      setSystemPrompt(config.system_prompt);
-      setRetellSettings(config.retell_settings);
-    } catch (err) {
-      if (err.response?.status === 404) {
-        // No config exists yet, use defaults
-        setSystemPrompt('');
-        setRetellSettings({
-          enable_backchannel: true,
-          backchannel_frequency: 0.8,
-          interruption_sensitivity: 0.7,
-          ambient_sound: 'off',
-          ambient_sound_volume: 0.3,
-          voice_temperature: 1.0,
-          voice_speed: 1.0,
-          responsiveness: 1.0,
-          voice_id: '11labs-Adrian',
-        });
-      } else {
-        setError('Failed to load configuration');
-      }
-    } finally {
-      setIsLoading(false);
+    if (configuration) {
+      setSystemPrompt(configuration.system_prompt || '');
+      setRetellSettings(configuration.retell_settings || DEFAULT_RETELL_SETTINGS);
+    } else {
+      setSystemPrompt('');
+      setRetellSettings(DEFAULT_RETELL_SETTINGS);
     }
-  };
+  }, [configuration]);
 
   const handleSave = async (e) => {
     e.preventDefault();
-    setIsSaving(true);
-    setError(null);
-    setSuccess(false);
 
     try {
-      await configurationsAPI.saveConfiguration({
+      await saveConfiguration({
         scenario_type: scenarioType,
         system_prompt: systemPrompt,
         retell_settings: retellSettings,
       });
-      setSuccess(true);
-      setTimeout(() => setSuccess(false), 3000);
     } catch (err) {
-      setError(err.response?.data?.detail || 'Failed to save configuration');
-    } finally {
-      setIsSaving(false);
+      console.error('Failed to save configuration:', err);
     }
+  };
+
+  const handleScenarioChange = (newScenarioType) => {
+    setScenarioType(newScenarioType);
   };
 
   const updateSetting = (key, value) => {
     setRetellSettings({ ...retellSettings, [key]: value });
   };
 
-  if (isLoading) {
+  if (isLoading && !configuration) {
     return (
       <div className="flex justify-center items-center h-64">
         <div className="text-gray-500">Loading configuration...</div>
@@ -118,28 +86,20 @@ export default function Configuration() {
               Scenario Type
             </label>
             <div className="flex space-x-4">
-              <button
-                type="button"
-                onClick={() => setScenarioType('checkin')}
-                className={`px-4 py-2 rounded-md text-sm font-medium ${
-                  scenarioType === 'checkin'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                }`}
-              >
-                Check-in
-              </button>
-              <button
-                type="button"
-                onClick={() => setScenarioType('emergency')}
-                className={`px-4 py-2 rounded-md text-sm font-medium ${
-                  scenarioType === 'emergency'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                }`}
-              >
-                Emergency
-              </button>
+              {Object.values(SCENARIO_TYPES).map((type) => (
+                <button
+                  key={type}
+                  type="button"
+                  onClick={() => handleScenarioChange(type)}
+                  className={`px-4 py-2 rounded-md text-sm font-medium ${
+                    scenarioType === type
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                  }`}
+                >
+                  {type.charAt(0).toUpperCase() + type.slice(1)}
+                </button>
+              ))}
             </div>
           </div>
 

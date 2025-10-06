@@ -1,29 +1,28 @@
 import { useState } from 'react';
-import { callsAPI } from '../api/calls';
+import { useCalls } from '../hooks/useCalls';
 import RetellWebCall from '../components/RetellWebCall';
+import { SCENARIO_TYPES } from '../constants';
 
 export default function TestCalls() {
   const [formData, setFormData] = useState({
     driver_name: '',
     load_number: '',
-    scenario_type: 'checkin',
+    scenario_type: SCENARIO_TYPES.CHECKIN,
   });
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
   const [webCallData, setWebCallData] = useState(null);
+
+  const { initiateWebCall, isLoading, error, clearError } = useCalls();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
-    setError(null);
+    clearError();
 
     try {
-      const result = await callsAPI.initiateWeb(formData);
+      const result = await initiateWebCall(formData);
       setWebCallData(result);
     } catch (err) {
-      setError(err.response?.data?.detail || 'Failed to initiate call');
-    } finally {
-      setIsLoading(false);
+      // Error is handled by the hook
+      console.error('Failed to initiate call:', err);
     }
   };
 
@@ -35,7 +34,6 @@ export default function TestCalls() {
   };
 
   const handleCallEnd = () => {
-    // Refresh the page or navigate to results
     window.location.href = `/calls/${webCallData.call_id}`;
   };
 
@@ -47,10 +45,16 @@ export default function TestCalls() {
             Web Call Active
           </h2>
           
-          <div className="mb-6 p-4 bg-blue-50 rounded-lg">
-            <p className="text-sm text-gray-700"><strong>Driver:</strong> {formData.driver_name}</p>
-            <p className="text-sm text-gray-700"><strong>Load:</strong> {formData.load_number}</p>
-            <p className="text-sm text-gray-700"><strong>Scenario:</strong> {formData.scenario_type}</p>
+          <div className="mb-6 p-4 bg-blue-50 rounded-lg space-y-2">
+            <p className="text-sm text-gray-700">
+              <strong>Driver:</strong> {formData.driver_name}
+            </p>
+            <p className="text-sm text-gray-700">
+              <strong>Load:</strong> {formData.load_number}
+            </p>
+            <p className="text-sm text-gray-700">
+              <strong>Scenario:</strong> {formData.scenario_type}
+            </p>
           </div>
 
           <RetellWebCall 
@@ -127,8 +131,8 @@ export default function TestCalls() {
                 <input
                   type="radio"
                   name="scenario_type"
-                  value="checkin"
-                  checked={formData.scenario_type === 'checkin'}
+                  value={SCENARIO_TYPES.CHECKIN}
+                  checked={formData.scenario_type === SCENARIO_TYPES.CHECKIN}
                   onChange={handleChange}
                   className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
                 />
@@ -138,8 +142,8 @@ export default function TestCalls() {
                 <input
                   type="radio"
                   name="scenario_type"
-                  value="emergency"
-                  checked={formData.scenario_type === 'emergency'}
+                  value={SCENARIO_TYPES.EMERGENCY}
+                  checked={formData.scenario_type === SCENARIO_TYPES.EMERGENCY}
                   onChange={handleChange}
                   className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
                 />
