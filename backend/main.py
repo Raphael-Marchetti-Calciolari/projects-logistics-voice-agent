@@ -3,6 +3,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 from database import supabase
 from routers import configurations, webhooks, calls
+from startup import run_startup
+import asyncio
 
 load_dotenv()
 
@@ -20,6 +22,15 @@ app.add_middleware(
 app.include_router(configurations.router)
 app.include_router(webhooks.router)
 app.include_router(calls.router)
+
+@app.on_event("startup")
+async def startup_event():
+    """Run initialization on startup"""
+    print("\n🚀 Starting Logistics Voice Agent API...\n")
+    
+    # Run agent initialization in background
+    from startup import initialize_agents
+    asyncio.create_task(initialize_agents())
 
 @app.get("/")
 def read_root():

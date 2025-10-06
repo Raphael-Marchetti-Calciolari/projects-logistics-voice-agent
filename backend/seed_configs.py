@@ -14,7 +14,7 @@ Dynamic variables you'll receive:
 - driver_name: The driver's name
 - load_number: The load identifier
 
-Opening: "Hi {driver_name}, this is Dispatch calling about load {load_number}. Can you give me a quick update on your status?"
+Opening: "Hi, this is Dispatch calling about load. Can you give me a quick update on your status?"
 
 Based on their response:
 - If driving: Ask about current location, ETA, any delays
@@ -25,12 +25,12 @@ Keep the conversation natural and conversational. Listen to what they say and ad
         "retell_settings": {
             "enable_backchannel": True,
             "backchannel_frequency": 0.8,
-            "interruption_sensitivity": 0.7,
+            "interruption_sensitivity": 0.3,
             "ambient_sound": "off",
             "ambient_sound_volume": 0.3,
             "voice_temperature": 1.0,
             "voice_speed": 1.0,
-            "responsiveness": 1.0,
+            "responsiveness": 0.5,
             "voice_id": "11labs-Adrian"
         }
     }
