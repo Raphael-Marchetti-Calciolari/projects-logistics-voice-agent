@@ -2,7 +2,7 @@
 
 A voice-based logistics system for driver check-ins and emergency situations, powered by Retell AI and OpenAI.
 
-[Video demo](https://drive.google.com/file/d/1hj1k7GW0s52qiQLUcEd4cZ5ZLy_frmO8/view?usp=sharing)
+[Video demo](https://drive.google.com/file/d/1hj1k7GW0s52qiQLUcEd4cZ5ZLy_frmO8/view?usp=sharing) (missing start ngrok in the video)
 
 ## Design Choices
 This logistics voice agent application follows a separation of concerns architecture where conversation intelligence and data processing are handled by specialized components:
